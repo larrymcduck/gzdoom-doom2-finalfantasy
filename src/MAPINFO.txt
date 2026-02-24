@@ -1,6 +1,6 @@
 gameinfo
 {
-	titlemusic = "title"
+	titlemusic = "ff1_nes_music:0"
 	creditpage = "TITLEPIC"
 	infopage = "TITLEPIC"
 	advisorytime = 0
@@ -29,13 +29,37 @@ cluster 1
 map MAP01 "World"
 {
 	cluster = 1
-	music = "world"
+	music = "ff1_nes_music:3"
 	sky1 = "SKY"
 }
 
-map MAP02 "Coneria Town"
-{
-	cluster = 1
-	music = "town"
-	sky1 = "SKY"
-}
+//map MAP02 "Coneria Town"
+//{
+//	cluster = 1
+//	music = "town"
+//	sky1 = "SKY"
+//}
+
+// 0 title
+// 1 prelude
+// 2 ending?
+// 3 world
+// 4 ship
+// 5 airship
+// 6 town
+// 7 castle
+// 8 earth cave
+// 9 matoya cave / dwarf cave
+// 10 marsh cave
+// 11 temple of fiends
+// 12 sky temple
+// 13 temple of fiends (chaos temple)
+// 14 shop
+// 15 battle
+// 16 menu
+// 17 party slain
+// 18 victory
+// 19 key item found
+// 20 item found
+// 21 sleep
+// 22 item used

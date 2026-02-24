@@ -1,0 +1,354 @@
+Actor FF1_Player : PlayerPawn
+{
+	Height 64
+	Radius 16
+	DamageFactor 0
+
+	Speed 1
+	PainSound ""
+
+	Health 100
+	Player.MaxHealth 100
+
+	Player.ForwardMove 0, 0
+	Player.SideMove 0, 0
+	Player.JumpZ 0
+
+	Player.DisplayName "hero"
+	Player.SoundClass ""
+	Player.ColorRange 112, 127
+
+	Player.StartItem "Gold", 400
+	Player.StartItem "ShowWorldBridge", 1
+
+	States
+	{
+		Spawn:
+			TNT1 A -1
+			loop
+		See:
+			TNT1 A 1
+			loop
+		Missile:
+		Melee:
+		Pain:
+			TNT1 A 1
+			Goto Spawn
+		Death:
+		XDeath:
+			TNT1 A 0
+			TNT1 A 0 A_NoBlocking
+			TNT1 A -1
+			Stop
+	}
+}
+
+Actor HeroClass : Inventory
+{
+    Inventory.MaxAmount 5
+}
+
+Actor HeroMax9 : Inventory
+{
+    Inventory.MaxAmount 9
+}
+
+Actor HeroLevel : Inventory
+{
+    Inventory.MaxAmount 99
+}
+
+Actor HeroMax999 : Inventory
+{
+    Inventory.MaxAmount 999
+}
+
+Actor HeroStat : Inventory
+{
+    Inventory.MaxAmount 255
+}
+
+Actor HeroXp : Inventory
+{
+    Inventory.MaxAmount 9999999
+}
+
+Actor HeroMagicCanUse : Inventory
+{
+    Inventory.MaxAmount 1
+}
+
+Actor Gold : Inventory
+{
+    Inventory.MaxAmount 9999999
+}
+
+Actor PlayTimeSeconds : Inventory
+{
+    Inventory.MaxAmount 359999
+}
+
+// -- heros -- //
+Actor Hero1Class : HeroClass {}
+Actor Hero1Level : HeroLevel {}
+Actor Hero1Xp : HeroXp {}
+Actor Hero1MaxHp : HeroMax999 {}
+Actor Hero1Hp : HeroMax999 {}
+Actor Hero1Strength : HeroStat {}
+Actor Hero1Agility : HeroStat {}
+Actor Hero1intelligence : HeroStat {}
+Actor Hero1Vitality : HeroStat {}
+Actor Hero1Luck : HeroStat {}
+Actor Hero1Damage : HeroStat {}
+Actor Hero1Hit : HeroStat {}
+Actor Hero1Absorb : HeroStat {}
+Actor Hero1Evade : HeroStat {}
+Actor Hero1WhiteMagicLv1 : HeroMagicCanUse {}
+Actor Hero1WhiteMagicLv2 : HeroMagicCanUse {}
+Actor Hero1WhiteMagicLv3 : HeroMagicCanUse {}
+Actor Hero1WhiteMagicLv4 : HeroMagicCanUse {}
+Actor Hero1WhiteMagicLv5 : HeroMagicCanUse {}
+Actor Hero1WhiteMagicLv6 : HeroMagicCanUse {}
+Actor Hero1WhiteMagicLv7 : HeroMagicCanUse {}
+Actor Hero1WhiteMagicLv8 : HeroMagicCanUse {}
+Actor Hero1BlackMagicLv1 : HeroMagicCanUse {}
+Actor Hero1BlackMagicLv2 : HeroMagicCanUse {}
+Actor Hero1BlackMagicLv3 : HeroMagicCanUse {}
+Actor Hero1BlackMagicLv4 : HeroMagicCanUse {}
+Actor Hero1BlackMagicLv5 : HeroMagicCanUse {}
+Actor Hero1BlackMagicLv6 : HeroMagicCanUse {}
+Actor Hero1BlackMagicLv7 : HeroMagicCanUse {}
+Actor Hero1BlackMagicLv8 : HeroMagicCanUse {}
+Actor Hero1MaxMpWhiteLv1 : HeroMax9 {}
+Actor Hero1MaxMpWhiteLv2 : HeroMax9 {}
+Actor Hero1MaxMpWhiteLv3 : HeroMax9 {}
+Actor Hero1MaxMpWhiteLv4 : HeroMax9 {}
+Actor Hero1MaxMpWhiteLv5 : HeroMax9 {}
+Actor Hero1MaxMpWhiteLv6 : HeroMax9 {}
+Actor Hero1MaxMpWhiteLv7 : HeroMax9 {}
+Actor Hero1MaxMpWhiteLv8 : HeroMax9 {}
+Actor Hero1MpWhiteLv1 : HeroMax9 {}
+Actor Hero1MpWhiteLv2 : HeroMax9 {}
+Actor Hero1MpWhiteLv3 : HeroMax9 {}
+Actor Hero1MpWhiteLv4 : HeroMax9 {}
+Actor Hero1MpWhiteLv5 : HeroMax9 {}
+Actor Hero1MpWhiteLv6 : HeroMax9 {}
+Actor Hero1MpWhiteLv7 : HeroMax9 {}
+Actor Hero1MpWhiteLv8 : HeroMax9 {}
+Actor Hero1MaxMpBlackLv1 : HeroMax9 {}
+Actor Hero1MaxMpBlackLv2 : HeroMax9 {}
+Actor Hero1MaxMpBlackLv3 : HeroMax9 {}
+Actor Hero1MaxMpBlackLv4 : HeroMax9 {}
+Actor Hero1MaxMpBlackLv5 : HeroMax9 {}
+Actor Hero1MaxMpBlackLv6 : HeroMax9 {}
+Actor Hero1MaxMpBlackLv7 : HeroMax9 {}
+Actor Hero1MaxMpBlackLv8 : HeroMax9 {}
+Actor Hero1MpBlackLv1 : HeroMax9 {}
+Actor Hero1MpBlackLv2 : HeroMax9 {}
+Actor Hero1MpBlackLv3 : HeroMax9 {}
+Actor Hero1MpBlackLv4 : HeroMax9 {}
+Actor Hero1MpBlackLv5 : HeroMax9 {}
+Actor Hero1MpBlackLv6 : HeroMax9 {}
+Actor Hero1MpBlackLv7 : HeroMax9 {}
+Actor Hero1MpBlackLv8 : HeroMax9 {}
+
+Actor Hero2Class : HeroClass {}
+Actor Hero2Level : HeroLevel {}
+Actor Hero2Xp : HeroXp {}
+Actor Hero2MaxHp : HeroMax999 {}
+Actor Hero2Hp : HeroMax999 {}
+Actor Hero2Strength : HeroStat {}
+Actor Hero2Agility : HeroStat {}
+Actor Hero2intelligence : HeroStat {}
+Actor Hero2Vitality : HeroStat {}
+Actor Hero2Luck : HeroStat {}
+Actor Hero2Damage : HeroStat {}
+Actor Hero2Hit : HeroStat {}
+Actor Hero2Absorb : HeroStat {}
+Actor Hero2Evade : HeroStat {}
+Actor Hero2WhiteMagicLv1 : HeroMagicCanUse {}
+Actor Hero2WhiteMagicLv2 : HeroMagicCanUse {}
+Actor Hero2WhiteMagicLv3 : HeroMagicCanUse {}
+Actor Hero2WhiteMagicLv4 : HeroMagicCanUse {}
+Actor Hero2WhiteMagicLv5 : HeroMagicCanUse {}
+Actor Hero2WhiteMagicLv6 : HeroMagicCanUse {}
+Actor Hero2WhiteMagicLv7 : HeroMagicCanUse {}
+Actor Hero2WhiteMagicLv8 : HeroMagicCanUse {}
+Actor Hero2BlackMagicLv1 : HeroMagicCanUse {}
+Actor Hero2BlackMagicLv2 : HeroMagicCanUse {}
+Actor Hero2BlackMagicLv3 : HeroMagicCanUse {}
+Actor Hero2BlackMagicLv4 : HeroMagicCanUse {}
+Actor Hero2BlackMagicLv5 : HeroMagicCanUse {}
+Actor Hero2BlackMagicLv6 : HeroMagicCanUse {}
+Actor Hero2BlackMagicLv7 : HeroMagicCanUse {}
+Actor Hero2BlackMagicLv8 : HeroMagicCanUse {}
+Actor Hero2MaxMpWhiteLv1 : HeroMax9 {}
+Actor Hero2MaxMpWhiteLv2 : HeroMax9 {}
+Actor Hero2MaxMpWhiteLv3 : HeroMax9 {}
+Actor Hero2MaxMpWhiteLv4 : HeroMax9 {}
+Actor Hero2MaxMpWhiteLv5 : HeroMax9 {}
+Actor Hero2MaxMpWhiteLv6 : HeroMax9 {}
+Actor Hero2MaxMpWhiteLv7 : HeroMax9 {}
+Actor Hero2MaxMpWhiteLv8 : HeroMax9 {}
+Actor Hero2MpWhiteLv1 : HeroMax9 {}
+Actor Hero2MpWhiteLv2 : HeroMax9 {}
+Actor Hero2MpWhiteLv3 : HeroMax9 {}
+Actor Hero2MpWhiteLv4 : HeroMax9 {}
+Actor Hero2MpWhiteLv5 : HeroMax9 {}
+Actor Hero2MpWhiteLv6 : HeroMax9 {}
+Actor Hero2MpWhiteLv7 : HeroMax9 {}
+Actor Hero2MpWhiteLv8 : HeroMax9 {}
+Actor Hero2MaxMpBlackLv1 : HeroMax9 {}
+Actor Hero2MaxMpBlackLv2 : HeroMax9 {}
+Actor Hero2MaxMpBlackLv3 : HeroMax9 {}
+Actor Hero2MaxMpBlackLv4 : HeroMax9 {}
+Actor Hero2MaxMpBlackLv5 : HeroMax9 {}
+Actor Hero2MaxMpBlackLv6 : HeroMax9 {}
+Actor Hero2MaxMpBlackLv7 : HeroMax9 {}
+Actor Hero2MaxMpBlackLv8 : HeroMax9 {}
+Actor Hero2MpBlackLv1 : HeroMax9 {}
+Actor Hero2MpBlackLv2 : HeroMax9 {}
+Actor Hero2MpBlackLv3 : HeroMax9 {}
+Actor Hero2MpBlackLv4 : HeroMax9 {}
+Actor Hero2MpBlackLv5 : HeroMax9 {}
+Actor Hero2MpBlackLv6 : HeroMax9 {}
+Actor Hero2MpBlackLv7 : HeroMax9 {}
+Actor Hero2MpBlackLv8 : HeroMax9 {}
+
+Actor Hero3Class : HeroClass {}
+Actor Hero3Level : HeroLevel {}
+Actor Hero3Xp : HeroXp {}
+Actor Hero3MaxHp : HeroMax999 {}
+Actor Hero3Hp : HeroMax999 {}
+Actor Hero3Strength : HeroStat {}
+Actor Hero3Agility : HeroStat {}
+Actor Hero3intelligence : HeroStat {}
+Actor Hero3Vitality : HeroStat {}
+Actor Hero3Luck : HeroStat {}
+Actor Hero3Damage : HeroStat {}
+Actor Hero3Hit : HeroStat {}
+Actor Hero3Absorb : HeroStat {}
+Actor Hero3Evade : HeroStat {}
+Actor Hero3WhiteMagicLv1 : HeroMagicCanUse {}
+Actor Hero3WhiteMagicLv2 : HeroMagicCanUse {}
+Actor Hero3WhiteMagicLv3 : HeroMagicCanUse {}
+Actor Hero3WhiteMagicLv4 : HeroMagicCanUse {}
+Actor Hero3WhiteMagicLv5 : HeroMagicCanUse {}
+Actor Hero3WhiteMagicLv6 : HeroMagicCanUse {}
+Actor Hero3WhiteMagicLv7 : HeroMagicCanUse {}
+Actor Hero3WhiteMagicLv8 : HeroMagicCanUse {}
+Actor Hero3BlackMagicLv1 : HeroMagicCanUse {}
+Actor Hero3BlackMagicLv2 : HeroMagicCanUse {}
+Actor Hero3BlackMagicLv3 : HeroMagicCanUse {}
+Actor Hero3BlackMagicLv4 : HeroMagicCanUse {}
+Actor Hero3BlackMagicLv5 : HeroMagicCanUse {}
+Actor Hero3BlackMagicLv6 : HeroMagicCanUse {}
+Actor Hero3BlackMagicLv7 : HeroMagicCanUse {}
+Actor Hero3BlackMagicLv8 : HeroMagicCanUse {}
+Actor Hero3MaxMpWhiteLv1 : HeroMax9 {}
+Actor Hero3MaxMpWhiteLv2 : HeroMax9 {}
+Actor Hero3MaxMpWhiteLv3 : HeroMax9 {}
+Actor Hero3MaxMpWhiteLv4 : HeroMax9 {}
+Actor Hero3MaxMpWhiteLv5 : HeroMax9 {}
+Actor Hero3MaxMpWhiteLv6 : HeroMax9 {}
+Actor Hero3MaxMpWhiteLv7 : HeroMax9 {}
+Actor Hero3MaxMpWhiteLv8 : HeroMax9 {}
+Actor Hero3MpWhiteLv1 : HeroMax9 {}
+Actor Hero3MpWhiteLv2 : HeroMax9 {}
+Actor Hero3MpWhiteLv3 : HeroMax9 {}
+Actor Hero3MpWhiteLv4 : HeroMax9 {}
+Actor Hero3MpWhiteLv5 : HeroMax9 {}
+Actor Hero3MpWhiteLv6 : HeroMax9 {}
+Actor Hero3MpWhiteLv7 : HeroMax9 {}
+Actor Hero3MpWhiteLv8 : HeroMax9 {}
+Actor Hero3MaxMpBlackLv1 : HeroMax9 {}
+Actor Hero3MaxMpBlackLv2 : HeroMax9 {}
+Actor Hero3MaxMpBlackLv3 : HeroMax9 {}
+Actor Hero3MaxMpBlackLv4 : HeroMax9 {}
+Actor Hero3MaxMpBlackLv5 : HeroMax9 {}
+Actor Hero3MaxMpBlackLv6 : HeroMax9 {}
+Actor Hero3MaxMpBlackLv7 : HeroMax9 {}
+Actor Hero3MaxMpBlackLv8 : HeroMax9 {}
+Actor Hero3MpBlackLv1 : HeroMax9 {}
+Actor Hero3MpBlackLv2 : HeroMax9 {}
+Actor Hero3MpBlackLv3 : HeroMax9 {}
+Actor Hero3MpBlackLv4 : HeroMax9 {}
+Actor Hero3MpBlackLv5 : HeroMax9 {}
+Actor Hero3MpBlackLv6 : HeroMax9 {}
+Actor Hero3MpBlackLv7 : HeroMax9 {}
+Actor Hero3MpBlackLv8 : HeroMax9 {}
+
+Actor Hero4Class : HeroClass {}
+Actor Hero4Level : HeroLevel {}
+Actor Hero4Xp : HeroXp {}
+Actor Hero4MaxHp : HeroMax999 {}
+Actor Hero4Hp : HeroMax999 {}
+Actor Hero4Strength : HeroStat {}
+Actor Hero4Agility : HeroStat {}
+Actor Hero4intelligence : HeroStat {}
+Actor Hero4Vitality : HeroStat {}
+Actor Hero4Luck : HeroStat {}
+Actor Hero4Damage : HeroStat {}
+Actor Hero4Hit : HeroStat {}
+Actor Hero4Absorb : HeroStat {}
+Actor Hero4Evade : HeroStat {}
+Actor Hero4WhiteMagicLv1 : HeroMagicCanUse {}
+Actor Hero4WhiteMagicLv2 : HeroMagicCanUse {}
+Actor Hero4WhiteMagicLv3 : HeroMagicCanUse {}
+Actor Hero4WhiteMagicLv4 : HeroMagicCanUse {}
+Actor Hero4WhiteMagicLv5 : HeroMagicCanUse {}
+Actor Hero4WhiteMagicLv6 : HeroMagicCanUse {}
+Actor Hero4WhiteMagicLv7 : HeroMagicCanUse {}
+Actor Hero4WhiteMagicLv8 : HeroMagicCanUse {}
+Actor Hero4BlackMagicLv1 : HeroMagicCanUse {}
+Actor Hero4BlackMagicLv2 : HeroMagicCanUse {}
+Actor Hero4BlackMagicLv3 : HeroMagicCanUse {}
+Actor Hero4BlackMagicLv4 : HeroMagicCanUse {}
+Actor Hero4BlackMagicLv5 : HeroMagicCanUse {}
+Actor Hero4BlackMagicLv6 : HeroMagicCanUse {}
+Actor Hero4BlackMagicLv7 : HeroMagicCanUse {}
+Actor Hero4BlackMagicLv8 : HeroMagicCanUse {}
+Actor Hero4MaxMpWhiteLv1 : HeroMax9 {}
+Actor Hero4MaxMpWhiteLv2 : HeroMax9 {}
+Actor Hero4MaxMpWhiteLv3 : HeroMax9 {}
+Actor Hero4MaxMpWhiteLv4 : HeroMax9 {}
+Actor Hero4MaxMpWhiteLv5 : HeroMax9 {}
+Actor Hero4MaxMpWhiteLv6 : HeroMax9 {}
+Actor Hero4MaxMpWhiteLv7 : HeroMax9 {}
+Actor Hero4MaxMpWhiteLv8 : HeroMax9 {}
+Actor Hero4MpWhiteLv1 : HeroMax9 {}
+Actor Hero4MpWhiteLv2 : HeroMax9 {}
+Actor Hero4MpWhiteLv3 : HeroMax9 {}
+Actor Hero4MpWhiteLv4 : HeroMax9 {}
+Actor Hero4MpWhiteLv5 : HeroMax9 {}
+Actor Hero4MpWhiteLv6 : HeroMax9 {}
+Actor Hero4MpWhiteLv7 : HeroMax9 {}
+Actor Hero4MpWhiteLv8 : HeroMax9 {}
+Actor Hero4MaxMpBlackLv1 : HeroMax9 {}
+Actor Hero4MaxMpBlackLv2 : HeroMax9 {}
+Actor Hero4MaxMpBlackLv3 : HeroMax9 {}
+Actor Hero4MaxMpBlackLv4 : HeroMax9 {}
+Actor Hero4MaxMpBlackLv5 : HeroMax9 {}
+Actor Hero4MaxMpBlackLv6 : HeroMax9 {}
+Actor Hero4MaxMpBlackLv7 : HeroMax9 {}
+Actor Hero4MaxMpBlackLv8 : HeroMax9 {}
+Actor Hero4MpBlackLv1 : HeroMax9 {}
+Actor Hero4MpBlackLv2 : HeroMax9 {}
+Actor Hero4MpBlackLv3 : HeroMax9 {}
+Actor Hero4MpBlackLv4 : HeroMax9 {}
+Actor Hero4MpBlackLv5 : HeroMax9 {}
+Actor Hero4MpBlackLv6 : HeroMax9 {}
+Actor Hero4MpBlackLv7 : HeroMax9 {}
+Actor Hero4MpBlackLv8 : HeroMax9 {}
+
+Actor WallCheck
+{
+    Height 64
+    Radius 16
+    States
+    {
+        Spawn:
+            TNT1 A 1
+            Stop
+    }
+}

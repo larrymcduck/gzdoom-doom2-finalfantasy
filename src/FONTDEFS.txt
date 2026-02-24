@@ -74,3 +74,9 @@ FF_FONT1
 	"?" FF-hammr
 	"/" FF-potn
 }
+
+FFNEW
+{
+    SPACEWIDTH 2
+    Template ffnew%03d
+}

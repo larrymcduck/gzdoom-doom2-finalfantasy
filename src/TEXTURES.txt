@@ -1,0 +1,15 @@
+graphic fi_mapr1, 16, 16
+{
+    patch fi_mapl1, 0, 0
+    {
+        FlipX
+    }
+}
+
+graphic fi_mapr2, 16, 16
+{
+    patch fi_mapl2, 0, 0
+    {
+        FlipX
+    }
+}

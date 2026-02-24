@@ -1,0 +1,9 @@
+nosave string hero2name = "";
+nosave string hero1name = "";
+nosave string hero3name = "";
+nosave string hero4name = "";
+
+nosave int hero1class = 0;
+nosave int hero2class = 1;
+nosave int hero3class = 2;
+nosave int hero4class = 3;

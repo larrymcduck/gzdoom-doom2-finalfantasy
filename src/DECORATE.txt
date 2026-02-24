@@ -1,4 +1,3 @@
-#include "HeroClasses.txt"
-#include "Items.txt"
-#include "Replace.txt"
-#include "Monsters.txt"
+#include "classes/player.txt"
+#include "classes/replace.txt"
+#include "classes/switches.txt"

@@ -1,3 +1,11 @@
+hires font:
+  - name: Calibri
+    size: 145
+    dropshadow:
+        invert colors
+        right: 13
+        down: 15
+
 ===============================FINAL  FANTASY==================================
 ===============================GAME MECHANICS==================================
 			  Version 0.85 - 7/3/2012

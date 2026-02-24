@@ -1,0 +1,55 @@
+DefaultListMenu
+{
+	LineSpacing 18
+	Font "ffnew", "Untranslated"
+	Selector "cursor", -24, -2
+}
+
+DefaultOptionMenu
+{
+
+}
+
+LISTMENU "MainMenu"
+{
+    StaticPatch 160, 0, "blck_scr", 1
+	StaticPatch 160, 12, "ff_logo", 1
+	StaticPatch 160, 80, "b_mm", 1
+	Position 140, 100
+	TextItem "New Game", "n", "CharacterSelect"
+	TextItem "Load Game", "l", "LoadGameMenu"
+	TextItem "Options", "o", "OptionsMenu"
+	TextItem "Quit", "q", "QuitMenu"
+}
+
+OptionValue "CharacterClasses"
+{
+	0, "Fighter"
+	1, "Thief"
+	2, "Monk"
+	3, "Red Mage"
+	4, "White Mage"
+	5, "Black Mage"
+}
+
+OptionMenu "CharacterSelect"
+{
+	Title "Character Select"
+	StaticText "Hero 1", "Gold"
+	TextField "Name", "hero1name"
+	Option "Class", "hero1class", "CharacterClasses"
+	StaticText ""
+	StaticText "Hero 2", "Gold"
+	TextField "Name", "hero2name"
+	Option "Class", "hero2class", "CharacterClasses"
+	StaticText ""
+	StaticText "Hero 3", "Gold"
+	TextField "Name", "hero3name"
+	Option "Class", "hero3class", "CharacterClasses"
+	StaticText ""
+	StaticText "Hero 4", "Gold"
+	TextField "Name", "hero4name"
+	Option "Class", "hero4class", "CharacterClasses"
+	StaticText ""
+	Submenu "Ready", "PlayerclassMenu"
+}
