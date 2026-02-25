@@ -13,6 +13,8 @@
 #define HUD_WIDTH 320
 #define HUD_HEIGHT 240
 
+int currentMapNum = 1;
+
 int hudHalfWidth = 0;
 int hudHalfHeight = 0;
 
@@ -67,9 +69,8 @@ function void show_map(void)
     hudHalfWidth = HUD_WIDTH / 2;
     hudHalfHeight = HUD_HEIGHT / 2;
 
-    int currentMapNum = GetLevelInfo(LEVELINFO_LEVELNUM);
-    mapSize = get_map_size(currentMapNum);
-    map = get_map_graphic(currentMapNum);
+    mapSize = get_map_size();
+    map = get_map_graphic();
 
     heroX = GetActorX(0) >> 16;
     heroY = GetActorY(0) >> 16;
@@ -92,7 +93,7 @@ function void show_map(void)
     str heroMapSprite = StrParam(s:heroMap, s:"_map", s:heroDirection, d:heroMapState);
     show_graphic(heroMapSprite, HERO_MAP_LAYER, (hudHalfWidth << 16), ((hudHalfHeight - 3) << 16));
 
-    map_objects(currentMapNum);
+    map_objects();
     hero_map_movement();
 }
 
@@ -109,29 +110,29 @@ function void check_movement(void) {
     canMoveDownLeft = Spawn("WallCheck", GetActorX(0) - 32.0, GetActorY(0) - 32.0, 0.0);
 }
 
-function void check_map_position(void)
+function void check_map_loop(void)
 {
     int newX = GetActorX(0);
     int newY = GetActorY(0);
     int newZ = GetActorZ(0);
-    if (newX == -32.0)
+    if (newX == (-16 << 16))
     {
-        newX = (mapSize * 2) << 16;
+        newX = ((mapSize * 2) - 16) << 16;
     }
 
-    if (newX == ((mapSize * 2) + 32) << 16)
+    if (newX == ((mapSize * 2) + 16) << 16)
     {
-        newX = 32.0;
+        newX = (16 << 16);
     }
 
-    if (newY == -32.0)
+    if (newY == (16 << 16))
     {
-        newY = (mapSize * 2) << 16;
+        newY = -(((mapSize * 2) - 16) << 16);
     }
 
-    if (newY == ((mapSize * 2) + 32) << 16)
+    if (newY == -(((mapSize * 2) + 16) << 16))
     {
-        newY = 32.0;
+        newY = (16 << 16);
     }
 
     SetActorPosition(0, newX, newY, newZ, 0);
@@ -142,8 +143,9 @@ function void hero_map_movement(void)
     Thing_Stop(0);
     if (canHeroMove == 1)
     {
-        check_map_position();
         canHeroMove = 0;
+        check_map_loop();
+        check_map_points();
         check_movement();
         int buttons = GetPlayerInput(0, INPUT_BUTTONS);
 
@@ -261,7 +263,7 @@ function void hero_map_movement(void)
     }
 }
 
-function int get_map_size(int currentMapNum)
+function int get_map_size(void)
 {
     switch(currentMapNum)
     {
@@ -272,7 +274,7 @@ function int get_map_size(int currentMapNum)
     return -1;
 }
 
-function str get_map_graphic(int currentMapNum)
+function str get_map_graphic(void)
 {
     switch(currentMapNum)
     {
@@ -289,7 +291,7 @@ function void mapDisplayCoordinates(int x, int y)
     mapCoordinateY = mapDisplayY - ((mapSize / 2) << 16) + (y << 16);
 }
 
-function void map_objects(int currentMapNum)
+function void map_objects(void)
 {
     switch(currentMapNum)
     {
@@ -303,7 +305,7 @@ function void world_map_objects(void)
 {
     if (CheckInventory("ShowWorldBridge"))
     {
-        Floor_MoveToValue(1, 100, 0, 0);
+        Floor_MoveToValue(1, 255, 0, 0);
         mapDisplayCoordinates(2440, 2440);
         int bridge_coordinates[2] = { mapCoordinateX, mapCoordinateY };
         if (CheckInventory("RidingShip"))
@@ -319,8 +321,13 @@ function void world_map_objects(void)
     }
     else
     {
-        Floor_MoveToValue(1, 100, 16, 0);
+        Floor_MoveToValue(1, 255, 16, 0);
         clear_graphic_layer(WORLD_BRIDGE_ABOVE_LAYER);
         clear_graphic_layer(WORLD_BRIDGE_BELOW_LAYER);
     }
+}
+
+function void check_map_points(void)
+{
+
 }

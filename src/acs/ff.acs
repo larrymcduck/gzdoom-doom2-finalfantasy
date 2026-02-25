@@ -2,11 +2,22 @@
 #include "zcommon.acs"
 #import "map.acs"
 
+function void debug(void)
+{
+    SetFont("ffnew");
+    HudMessage(d:GetActorX(0), s:" , ", d:GetActorY(0); HUDMSG_PLAIN, 10, "CR_UNTRANSLATED", 160.0, 120.0, 0);
+    HudMessage(d:GetActorX(0) >> 16, s:" , ", d:GetActorY(0) >> 16; HUDMSG_PLAIN, 11, "CR_UNTRANSLATED", 160.0, 140.0, 0);
+    HudMessage(d:(8208 << 16), s:" , ", d:(16 << 16); HUDMSG_PLAIN, 12, "CR_UNTRANSLATED", 160.0, 160.0, 0);
+}
+
 script "background_process" ENTER
 {
     while (true)
     {
+        currentMapNum = GetLevelInfo(LEVELINFO_LEVELNUM);
         show_map();
+        //debug();
         Delay(1);
     }
 }
+
