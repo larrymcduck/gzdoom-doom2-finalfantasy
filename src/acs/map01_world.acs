@@ -1,0 +1,58 @@
+#library "map01_world"
+#include "zcommon.acs"
+#import "vars.acs"
+#import "map.acs"
+
+function void map01_world_objects(void)
+{
+    if (CheckInventory("ShowWorldBridge"))
+    {
+        Floor_MoveToValue(1, 255, 0, 0);
+        mapDisplayCoordinates(2440, 2440);
+        int bridge_coordinates[2] = { mapCoordinateX, mapCoordinateY };
+        if (CheckInventory("RidingShip"))
+        {
+            show_graphic("bridge", HERO_MAP_LAYER - 1, bridge_coordinates[0], bridge_coordinates[1]);
+            clear_graphic_layer(HERO_MAP_LAYER + 1);
+        }
+        else
+        {
+            show_graphic("bridge", HERO_MAP_LAYER + 1, bridge_coordinates[0], bridge_coordinates[1]);
+            clear_graphic_layer(HERO_MAP_LAYER - 1);
+        }
+    }
+    else
+    {
+        Floor_MoveToValue(1, 255, 16, 0);
+        clear_graphic_layer(HERO_MAP_LAYER + 1);
+        clear_graphic_layer(HERO_MAP_LAYER - 1);
+    }
+}
+
+function void saveWorldMapCoordinates(void)
+{
+    worldMapX = heroX;
+    worldMapY = heroY;
+}
+
+function void map01_world_points(void)
+{
+    nextMap = currentMapNum;
+
+    if (!CheckInventory("RidingAirship"))
+    {
+        // Cornelia
+        if ((heroX == 4848 || heroX == 4944) && (heroY == -5136 || heroY == -5168 || heroY == -5200))
+        {
+            nextMap = 2;
+        }
+
+        // Cornelia Castle
+        if ((heroX == 4880 || heroX == 4912) && heroY == -5104)
+        {
+            nextMap = 3;
+        }
+    }
+
+    screenChanging = nextMap != currentMapNum;
+}

@@ -1,25 +1,15 @@
 #library "map"
 #include "zcommon.acs"
+#import "vars.acs"
+#import "map01_world.acs"
 
-#define MAP_LAYER 10000
-#define HERO_MAP_LAYER 9000
+world int 1:currentMapNum;
+world int 2:nextMap;
 
-#define WORLD_AIRSHIP_LAYER 9003
-#define WORLD_SHIP_LAYER 9002
-#define WORLD_CANAL_LAYER 9001
-#define WORLD_BRIDGE_ABOVE_LAYER 8999
-#define WORLD_BRIDGE_BELOW_LAYER 9004
-
-#define HUD_WIDTH 320
-#define HUD_HEIGHT 240
-
-int currentMapNum = 1;
-
-int hudHalfWidth = 0;
-int hudHalfHeight = 0;
-
-int heroX = 0;
-int heroY = 0;
+world int 3:heroX;
+world int 4:heroY;
+world int 5:worldMapX;
+world int 6:worldMapY;
 
 int nextMapX = 0;
 int nextMapY = 0;
@@ -46,18 +36,12 @@ str heroDirection = "d";
 int heroMapState = 1;
 int heroMapStateTics = 0;
 
-int canHeroMove = 1;
+bool canHeroMove = true;
 
 int moveX = 0;
 int moveY = 0;
 
 int moveSpeed = 4;
-
-function void show_graphic(str graphic, int layer, int x, int y)
-{
-    SetFont(graphic);
-    HudMessage(s:"A"; HUDMSG_PLAIN, layer, "CR_UNTRANSLATED", x, y, 0);
-}
 
 function void clear_graphic_layer(int layer)
 {
@@ -66,9 +50,6 @@ function void clear_graphic_layer(int layer)
 
 function void show_map(void)
 {
-    hudHalfWidth = HUD_WIDTH / 2;
-    hudHalfHeight = HUD_HEIGHT / 2;
-
     mapSize = get_map_size();
     map = get_map_graphic();
 
@@ -78,7 +59,7 @@ function void show_map(void)
     mapDisplayX = ((mapSize / 2) + hudHalfWidth - (((GetActorX(0) / 32) * 16) >> 16)) << 16;
     mapDisplayY = ((mapSize / 2) + hudHalfHeight + (((GetActorY(0) / 32) * 16) >> 16)) << 16;
 
-    SetHudSize(HUD_WIDTH, HUD_HEIGHT, FALSE);
+    SetHudSize(320, 240, FALSE);
 
     show_graphic(map, MAP_LAYER, mapDisplayX, mapDisplayY);
     show_graphic(map, MAP_LAYER + 1, mapDisplayX - (mapSize << 16), mapDisplayY - (mapSize << 16));
@@ -141,11 +122,15 @@ function void check_map_loop(void)
 function void hero_map_movement(void)
 {
     Thing_Stop(0);
-    if (canHeroMove == 1)
+    if (!screenChanging)
     {
-        canHeroMove = 0;
-        check_map_loop();
         check_map_points();
+    }
+
+    if (canHeroMove)
+    {
+        canHeroMove = false;
+        check_map_loop();
         check_movement();
         int buttons = GetPlayerInput(0, INPUT_BUTTONS);
 
@@ -223,32 +208,34 @@ function void hero_map_movement(void)
 
     if (GetActorX(0) == nextMapX && GetActorY(0) == nextMapY)
     {
-        canHeroMove = 1;
+        canHeroMove = !screenChanging;
         moveX = 0;
         moveY = 0;
         heroMapState = 1;
         heroMapStateTics = 0;
 
-        if ((buttons & BT_FORWARD) && !(buttons & BT_BACK))  // look up
+        if (!screenChanging)
         {
-            heroDirection = "u";
-        }
-        else if ((buttons & BT_BACK) && !(buttons & BT_FORWARD))  // look down
-        {
-            heroDirection = "d";
-        }
-        else if ((buttons & BT_MOVELEFT) && !(buttons & BT_MOVERIGHT))  // look left
-        {
-            heroDirection = "l";
-        }
-        else if ((buttons & BT_MOVERIGHT) && !(buttons & BT_MOVELEFT))  // look right
-        {
-            heroDirection = "r";
+            if ((buttons & BT_FORWARD) && !(buttons & BT_BACK))  // look up
+            {
+                heroDirection = "u";
+            }
+            else if ((buttons & BT_BACK) && !(buttons & BT_FORWARD))  // look down
+            {
+                heroDirection = "d";
+            }
+            else if ((buttons & BT_MOVELEFT) && !(buttons & BT_MOVERIGHT))  // look left
+            {
+                heroDirection = "l";
+            }
+            else if ((buttons & BT_MOVERIGHT) && !(buttons & BT_MOVELEFT))  // look right
+            {
+                heroDirection = "r";
+            }
         }
     }
     else
     {
-
         SetActorVelocity(0, (moveX << 16) * moveSpeed, (moveY << 16) * moveSpeed, 0, 0, 0);
 
         heroMapStateTics++;
@@ -296,38 +283,17 @@ function void map_objects(void)
     switch(currentMapNum)
     {
         case 1:
-            world_map_objects();
+            map01_world_objects();
             return;
-    }
-}
-
-function void world_map_objects(void)
-{
-    if (CheckInventory("ShowWorldBridge"))
-    {
-        Floor_MoveToValue(1, 255, 0, 0);
-        mapDisplayCoordinates(2440, 2440);
-        int bridge_coordinates[2] = { mapCoordinateX, mapCoordinateY };
-        if (CheckInventory("RidingShip"))
-        {
-            show_graphic("bridge", WORLD_BRIDGE_ABOVE_LAYER, bridge_coordinates[0], bridge_coordinates[1]);
-            clear_graphic_layer(WORLD_BRIDGE_BELOW_LAYER);
-        }
-        else
-        {
-            show_graphic("bridge", WORLD_BRIDGE_BELOW_LAYER, bridge_coordinates[0], bridge_coordinates[1]);
-            clear_graphic_layer(WORLD_BRIDGE_ABOVE_LAYER);
-        }
-    }
-    else
-    {
-        Floor_MoveToValue(1, 255, 16, 0);
-        clear_graphic_layer(WORLD_BRIDGE_ABOVE_LAYER);
-        clear_graphic_layer(WORLD_BRIDGE_BELOW_LAYER);
     }
 }
 
 function void check_map_points(void)
 {
-
+    switch(currentMapNum)
+    {
+        case 1:
+            map01_world_points();
+            return;
+    }
 }

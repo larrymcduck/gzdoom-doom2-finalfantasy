@@ -1,0 +1,27 @@
+#library "vars"
+#include "zcommon.acs"
+
+global int 1:MAP_LAYER;
+global int 2:HERO_MAP_LAYER;
+
+global int 3:hudHalfWidth;
+global int 4:hudHalfHeight;
+
+global bool 5:screenChanging;
+
+function void set_vars(void)
+{
+    MAP_LAYER = 10000;
+    HERO_MAP_LAYER = 9000;
+
+    hudHalfWidth = 160;
+    hudHalfHeight = 120;
+
+    screenChanging = false;
+}
+
+function void show_graphic(str graphic, int layer, int x, int y)
+{
+    SetFont(graphic);
+    HudMessage(s:"A"; HUDMSG_PLAIN, layer, "CR_UNTRANSLATED", x, y, 0);
+}

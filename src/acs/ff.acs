@@ -1,23 +1,65 @@
 #library "ff"
 #include "zcommon.acs"
+#import "vars.acs"
 #import "map.acs"
 
-function void debug(void)
-{
-    SetFont("ffnew");
-    HudMessage(d:GetActorX(0), s:" , ", d:GetActorY(0); HUDMSG_PLAIN, 10, "CR_UNTRANSLATED", 160.0, 120.0, 0);
-    HudMessage(d:GetActorX(0) >> 16, s:" , ", d:GetActorY(0) >> 16; HUDMSG_PLAIN, 11, "CR_UNTRANSLATED", 160.0, 140.0, 0);
-    HudMessage(d:(8208 << 16), s:" , ", d:(16 << 16); HUDMSG_PLAIN, 12, "CR_UNTRANSLATED", 160.0, 160.0, 0);
-}
+int tics = 0;
+int alpha = 0.0;
 
 script "background_process" ENTER
 {
+    set_vars();
+
     while (true)
     {
         currentMapNum = GetLevelInfo(LEVELINFO_LEVELNUM);
         show_map();
         //debug();
+
+        if (screenChanging)
+        {
+            if (tics <= 20)
+            {
+                alpha += 0.05;
+            }
+            else if (tics == 21)
+            {
+                // change map
+                SetActorPosition(0, (4912 << 16), (-5200 << 16), 0.0, 0);
+                nextMapX = GetActorX(0);
+                nextMapY = GetActorY(0);
+                heroDirection = "d";
+            }
+            else
+            {
+                alpha -= 0.05;
+            }
+
+            SetFont("blck_scr");
+            HudMessage(s:"A"; HUDMSG_PLAIN | HUDMSG_ALPHA, 2, "CR_UNTRANSLATED", 160.0, 120.0, 0, alpha);
+
+            if (tics == 42)
+            {
+                HudMessage(s:""; HUDMSG_PLAIN, 2, "CR_UNTRANSLATED", 160.0, 120.0, 0);
+                screenChanging = false;
+                tics = 0;
+                alpha = 0.0;
+            }
+            else
+            {
+                tics++;
+            }
+        }
+
         Delay(1);
     }
 }
 
+function void debug(void)
+{
+    SetFont("ffnew");
+    HudMessage(d:canHeroMove, s:" , ", d:screenChanging, s:" , ", d:nextMap; HUDMSG_PLAIN, 1, "CR_UNTRANSLATED", 160.0, 120.0, 0);
+    //HudMessage(d:GetActorX(0), s:" , ", d:GetActorY(0); HUDMSG_PLAIN, 10, "CR_UNTRANSLATED", 160.0, 120.0, 0);
+    //HudMessage(d:GetActorX(0) >> 16, s:" , ", d:GetActorY(0) >> 16; HUDMSG_PLAIN, 11, "CR_UNTRANSLATED", 160.0, 140.0, 0);
+    //HudMessage(d:(8208 << 16), s:" , ", d:(16 << 16); HUDMSG_PLAIN, 12, "CR_UNTRANSLATED", 160.0, 160.0, 0);
+}
