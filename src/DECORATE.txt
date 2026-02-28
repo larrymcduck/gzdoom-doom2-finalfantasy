@@ -1,3 +1,4 @@
 #include "classes/player.txt"
-#include "classes/replace.txt"
 #include "classes/switches.txt"
+#include "classes/misc.txt"
+#include "classes/map02.txt"

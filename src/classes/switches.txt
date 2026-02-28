@@ -3,7 +3,19 @@ actor GameSwitch : Inventory
     Inventory.MaxAmount 1
 }
 
+actor InteractDirection : Inventory
+{
+    Inventory.MaxAmount 999999
+}
+
 actor ShowWorldBridge : GameSwitch {}
 actor RidingShip : GameSwitch {}
 actor RidingCanoe : GameSwitch {}
 actor RidingAirship : GameSwitch {}
+actor MovedOnce : GameSwitch {}
+actor PressingAttack : GameSwitch {}
+
+actor InteractUp : InteractDirection {}
+actor InteractDown : InteractDirection {}
+actor InteractLeft : InteractDirection {}
+actor InteractRight : InteractDirection {}

@@ -3,6 +3,8 @@ Actor FF1_Player : PlayerPawn
 	Height 64
 	Radius 16
 	DamageFactor 0
+	+DONTTHRUST
+	Mass 100
 
 	Speed 1
 	PainSound ""
@@ -19,6 +21,10 @@ Actor FF1_Player : PlayerPawn
 	Player.ColorRange 112, 127
 
 	Player.StartItem "Gold", 400
+  Player.StartItem "Interact", 1
+
+
+
 	Player.StartItem "ShowWorldBridge", 1
 
 	States
@@ -41,6 +47,53 @@ Actor FF1_Player : PlayerPawn
 			TNT1 A -1
 			Stop
 	}
+}
+
+Actor Interact : Weapon
+{
+  +WEAPON.DONTBOB
+  Weapon.AmmoUse 0
+  
+  States
+  {
+    Ready:
+      FFFF A 1 A_WeaponReady
+      loop
+    Deselect:
+      FFFF AAAAAAAAAAAAAAAAAAAAAAAAAA 0 A_Lower
+      Loop
+    Select:
+      FFFF AAAAAAAAAAAAAAAAAAAAAAAAAA 0 A_Lower
+      Loop
+    Fire:
+      FFFF A 0
+      FFFF A 1 ACS_NamedExecuteAlways("try_interact", 0)
+      FFFF A 0 A_ReFire
+      Goto Ready
+    Hold:
+      FFFF A 1
+      FFFF A 0 A_ReFire
+      Goto Ready
+  }
+}
+
+Actor InteractSpawn
+{
+  Speed 0
+  Projectile
+  Height 32
+  Radius 12
+  States
+  {
+    Spawn:
+      TNT1 A 0
+      TNT1 A 1 A_Explode(100, 12)
+      TNT1 A 0
+      Stop
+    Death:
+      TNT1 A 1
+      Stop
+  }
 }
 
 Actor HeroClass : Inventory
@@ -343,12 +396,13 @@ Actor Hero4MpBlackLv8 : HeroMax9 {}
 
 Actor WallCheck
 {
-    Height 64
-    Radius 16
-    States
-    {
-        Spawn:
-            TNT1 A 1
-            Stop
-    }
+  +SOLID
+  Height 64
+  Radius 16
+  States
+  {
+    Spawn:
+      TNT1 A 1
+      Stop
+  }
 }

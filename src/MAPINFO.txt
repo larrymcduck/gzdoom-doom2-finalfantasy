@@ -30,15 +30,22 @@ map MAP01 "World"
 {
 	cluster = 1
 	music = "ff1_nes_music:3"
-	sky1 = "SKY"
+	SKY1 = "CAVE-IN"
 }
 
-//map MAP02 "Coneria Town"
-//{
-//	cluster = 1
-//	music = "town"
-//	sky1 = "SKY"
-//}
+map MAP02 "Cornelia"
+{
+	cluster = 1
+	music = "ff1_nes_music:6"
+	SKY1 = "CAVE-IN"
+}
+
+map MAP03 "Cornelia Castle"
+{
+	cluster = 1
+	music = "ff1_nes_music:7"
+	SKY1 = "CAVE-IN"
+}
 
 // 0 title
 // 1 prelude

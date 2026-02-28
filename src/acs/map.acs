@@ -2,17 +2,8 @@
 #include "zcommon.acs"
 #import "vars.acs"
 #import "map01_world.acs"
+#import "map02_cornelia.acs"
 
-world int 1:currentMapNum;
-world int 2:nextMap;
-
-world int 3:heroX;
-world int 4:heroY;
-world int 5:worldMapX;
-world int 6:worldMapY;
-
-int nextMapX = 0;
-int nextMapY = 0;
 int canMoveUp = 1;
 int canMoveDown = 1;
 int canMoveLeft = 1;
@@ -31,21 +22,20 @@ int mapCoordinateY = 0;
 int mapSize = 0;
 str map = "";
 
-str heroMap = "fi";
-str heroDirection = "d";
-int heroMapState = 1;
-int heroMapStateTics = 0;
-
-bool canHeroMove = true;
+int sameMapX = -1;
+int sameMapY = -1;
 
 int moveX = 0;
 int moveY = 0;
 
-int moveSpeed = 4;
+int walkSpeed = 4;
 
-function void clear_graphic_layer(int layer)
+bool showingMessage = false;
+
+function void saveWorldMapCoordinates(void)
 {
-    HudMessage(s:""; HUDMSG_PLAIN, layer, "CR_UNTRANSLATED", 0.0, 0.0, 0);
+    worldMapX = heroX;
+    worldMapY = heroY;
 }
 
 function void show_map(void)
@@ -122,12 +112,14 @@ function void check_map_loop(void)
 function void hero_map_movement(void)
 {
     Thing_Stop(0);
-    if (!screenChanging)
+    if (!screenChanging && CheckInventory("MovedOnce"))
     {
         check_map_points();
     }
 
-    if (canHeroMove)
+    int moveSpeed = walkSpeed;
+
+    if (canHeroMove && !showingMessage)
     {
         canHeroMove = false;
         check_map_loop();
@@ -193,13 +185,9 @@ function void hero_map_movement(void)
         nextMapX = GetActorX(0) + ((moveX * 32) << 16);
         nextMapY = GetActorY(0) + ((moveY * 32) << 16);
 
-        if (buttons & BT_JUMP)  // walking only
+        if (buttons & BT_JUMP)
         {
-            moveSpeed = 8;
-        }
-        else
-        {
-            moveSpeed = 4;
+            moveSpeed = walkSpeed * 2;
         }
 
         // (buttons & BT_USE) || (buttons & BT_ALTATTACK) || (buttons & BT_JUMP)
@@ -214,7 +202,7 @@ function void hero_map_movement(void)
         heroMapState = 1;
         heroMapStateTics = 0;
 
-        if (!screenChanging)
+        if (!screenChanging && !showingMessage)
         {
             if ((buttons & BT_FORWARD) && !(buttons & BT_BACK))  // look up
             {
@@ -234,8 +222,9 @@ function void hero_map_movement(void)
             }
         }
     }
-    else
+    else if (!screenChanging)
     {
+        GiveInventory("MovedOnce", 1);
         SetActorVelocity(0, (moveX << 16) * moveSpeed, (moveY << 16) * moveSpeed, 0, 0, 0);
 
         heroMapStateTics++;
@@ -256,6 +245,8 @@ function int get_map_size(void)
     {
         case 1:
             return 4096;
+        case 2:
+            return 1024;
     }
 
     return -1;
@@ -263,13 +254,17 @@ function int get_map_size(void)
 
 function str get_map_graphic(void)
 {
-    switch(currentMapNum)
-    {
-        case 1:
-            return "world";
-    }
+  //return "";
 
-    return "";
+  switch(currentMapNum)
+  {
+    case 1:
+      return "world";
+    case 2:
+      return "cornelia";
+  }
+
+  return "";
 }
 
 function void mapDisplayCoordinates(int x, int y)
@@ -278,22 +273,121 @@ function void mapDisplayCoordinates(int x, int y)
     mapCoordinateY = mapDisplayY - ((mapSize / 2) << 16) + (y << 16);
 }
 
+function int mapDisplayCoordinatesX(int x)
+{
+    return mapDisplayX - ((mapSize / 2) << 16) + (x << 16);
+}
+
+function int mapDisplayCoordinatesY(int y)
+{
+    return mapDisplayY - ((mapSize / 2) << 16) + (y << 16);
+}
+
 function void map_objects(void)
 {
     switch(currentMapNum)
     {
         case 1:
-            map01_world_objects();
+            map01_objects();
+            return;
+        case 2:
+            map02_objects();
             return;
     }
 }
 
 function void check_map_points(void)
 {
+    nextMap = currentMapNum;
+    nextMapStart = 0;
+
     switch(currentMapNum)
     {
         case 1:
-            map01_world_points();
-            return;
+            map01_points();
+            break;
+        case 2:
+            map02_points();
+            break;
     }
+
+    screenChanging = nextMap != currentMapNum;
+}
+
+function void set_next_map(int nextMapNum, str nextMapHeroDir)
+{
+    TakeInventory("MovedOnce", 1);
+    if (currentMapNum == 1)
+    {
+        saveWorldMapCoordinates();
+    }
+
+    nextMap = nextMapNum;
+    nextHeroDirection = nextMapHeroDir;
+}
+
+script "try_interact" (void)
+{
+  if (!canHeroMove)
+  {
+    terminate;  
+  }
+  else if (showingMessage)
+  {
+    clear_message();
+    terminate;
+  }
+  
+  int spawnX = heroX;
+  int spawnY = heroY;
+
+  if (heroDirection == "u")
+  {
+    spawnY += 32;
+  }
+  else if (heroDirection == "d")
+  {
+    spawnY -= 32;
+  }
+  else if (heroDirection == "l")
+  {
+    spawnX -= 32;
+  }
+  else if (heroDirection == "r")
+  {
+    spawnX += 32;
+  }
+  
+  SpawnForced("InteractSpawn", spawnX << 16, spawnY << 16, GetActorZ(0) + 32.0);
+}
+
+script "interact" (int entity_map, int entity)
+{
+  // face hero
+
+  SetActivator(0, AAPTR_PLAYER1);
+
+  switch(entity_map)
+  {
+    case 2:
+      map02_interact(entity);
+      break;
+  }
+}
+
+function void show_message(str lump)
+{
+  showingMessage = true;
+  show_graphic("msg_back", 101, 160.0, 50.0);
+
+  SetHudSize(320, 240, FALSE);
+  SetFont("ffnew");
+  HudMessage(l:lump; HUDMSG_PLAIN, 100, "CR_UNTRANSLATED", 160.0, 50.0, 0);
+}
+
+function void clear_message(void)
+{
+  showingMessage = false;
+  clear_graphic_layer(101);
+  clear_graphic_layer(100);
 }

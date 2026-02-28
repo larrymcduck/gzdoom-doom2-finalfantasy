@@ -3,7 +3,7 @@
 #import "vars.acs"
 #import "map.acs"
 
-function void map01_world_objects(void)
+function void map01_objects(void)
 {
     if (CheckInventory("ShowWorldBridge"))
     {
@@ -29,30 +29,20 @@ function void map01_world_objects(void)
     }
 }
 
-function void saveWorldMapCoordinates(void)
+function void map01_points(void)
 {
-    worldMapX = heroX;
-    worldMapY = heroY;
-}
-
-function void map01_world_points(void)
-{
-    nextMap = currentMapNum;
-
     if (!CheckInventory("RidingAirship"))
     {
         // Cornelia
         if ((heroX == 4848 || heroX == 4944) && (heroY == -5136 || heroY == -5168 || heroY == -5200))
         {
-            nextMap = 2;
+            set_next_map(2, "u");
         }
 
         // Cornelia Castle
         if ((heroX == 4880 || heroX == 4912) && heroY == -5104)
         {
-            nextMap = 3;
+            set_next_map(3, "u");
         }
     }
-
-    screenChanging = nextMap != currentMapNum;
 }

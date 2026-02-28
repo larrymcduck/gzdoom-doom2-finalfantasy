@@ -1,0 +1,33 @@
+#library "map02_cornelia"
+#include "zcommon.acs"
+#import "vars.acs"
+#import "map.acs"
+
+function void map02_objects(void)
+{
+  show_graphic("door1", 6000, mapDisplayCoordinatesX(312), mapDisplayCoordinatesY(392));  // black magic door
+  show_graphic("door1", 6001, mapDisplayCoordinatesX(376), mapDisplayCoordinatesY(392));  // white magaic door
+  show_graphic("door1", 6002, mapDisplayCoordinatesX(360), mapDisplayCoordinatesY(488));  // armor door
+  show_graphic("door1", 6003, mapDisplayCoordinatesX(440), mapDisplayCoordinatesY(488));  // weapon door
+  show_graphic("door1", 6004, mapDisplayCoordinatesX(440), mapDisplayCoordinatesY(616));  // inn door
+  show_graphic("door1", 6005, mapDisplayCoordinatesX(648), mapDisplayCoordinatesY(392));  // clinic door
+  show_graphic("door1", 6006, mapDisplayCoordinatesX(696), mapDisplayCoordinatesY(488));  // item door
+}
+
+function void map02_points(void)
+{
+  if ((heroX == 1040 && heroY == -624) || (heroX == 1552 && heroY == -1040) || (heroX == 1040 && heroY == -1424))
+  {
+    set_next_map(1, "d");
+  }
+}
+
+function void map02_interact(int entity)
+{
+  switch (entity)
+  {
+    case 1:
+      show_message("MAP02_FOUNTAIN");
+      break;
+  }
+}

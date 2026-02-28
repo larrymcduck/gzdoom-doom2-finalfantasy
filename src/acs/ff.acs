@@ -3,63 +3,143 @@
 #import "vars.acs"
 #import "map.acs"
 
-int tics = 0;
-int alpha = 0.0;
-
-script "background_process" ENTER
+script "open" OPEN
 {
     set_vars();
+}
 
-    while (true)
+script "enter" ENTER
+{
+    reset_vars();
+    bool terminateScript = false;
+
+    while (!terminateScript)
     {
-        currentMapNum = GetLevelInfo(LEVELINFO_LEVELNUM);
-        show_map();
-        //debug();
-
-        if (screenChanging)
-        {
-            if (tics <= 20)
-            {
-                alpha += 0.05;
-            }
-            else if (tics == 21)
-            {
-                // change map
-                SetActorPosition(0, (4912 << 16), (-5200 << 16), 0.0, 0);
-                nextMapX = GetActorX(0);
-                nextMapY = GetActorY(0);
-                heroDirection = "d";
-            }
-            else
-            {
-                alpha -= 0.05;
-            }
-
-            SetFont("blck_scr");
-            HudMessage(s:"A"; HUDMSG_PLAIN | HUDMSG_ALPHA, 2, "CR_UNTRANSLATED", 160.0, 120.0, 0, alpha);
-
-            if (tics == 42)
-            {
-                HudMessage(s:""; HUDMSG_PLAIN, 2, "CR_UNTRANSLATED", 160.0, 120.0, 0);
-                screenChanging = false;
-                tics = 0;
-                alpha = 0.0;
-            }
-            else
-            {
-                tics++;
-            }
-        }
-
+        terminateScript = background_process();
         Delay(1);
     }
+
+    changeMap();
+}
+
+script "return" RETURN
+{
+    if (nextMap == 1)
+    {
+        SetActorPosition(0, (worldMapX << 16), (worldMapY << 16), 0.0, 0);
+        nextHeroDirection = "d";
+    }
+
+    reset_vars();
+
+    bool terminateScript = false;
+
+    while (!terminateScript)
+    {
+        terminateScript = background_process();
+        Delay(1);
+    }
+
+    changeMap();
+}
+
+function void reset_vars(void)
+{
+    TakeInventory("MovedOnce", 1);
+    heroDirection = nextHeroDirection;
+}
+
+function bool background_process(void)
+{
+    currentMapNum = GetLevelInfo(LEVELINFO_LEVELNUM);
+    show_map();
+    //debug();
+
+    return screen_changing();
+}
+
+function bool screen_changing(void)
+{
+    if (screenChanging)
+    {
+        if (tics <= 20)
+        {
+            alpha += 0.05;
+        }
+        else if (tics == 21)
+        {
+            // change map
+            if (sameMapX != -1 && sameMapY != -1)
+            {
+                TakeInventory("MovedOnce", 1);
+                SetActorPosition(0, (sameMapX << 16), (sameMapY << 16), 0.0, 0);
+                sameMapX = -1;
+                sameMapY = -1;
+                heroDirection = nextHeroDirection;
+            }
+            else if (nextMap != currentMapNum)
+            {
+                tics++;
+                return true;
+            }
+        }
+        else
+        {
+            alpha -= 0.05;
+        }
+
+        SetFont("blck_scr");
+        HudMessage(s:"A"; HUDMSG_PLAIN | HUDMSG_ALPHA, 100, "CR_UNTRANSLATED", 160.0, 120.0, 0, alpha);
+
+        if (tics == 42)
+        {
+            clear_graphic_layer(100);
+            screenChanging = false;
+            tics = 0;
+            alpha = 0.0;
+            nextMap = currentMapNum;
+            nextMapX = GetActorX(0);
+            nextMapY = GetActorY(0);
+        }
+        else
+        {
+            tics++;
+        }
+    }
+
+    return false;
+}
+
+function void changeMap(void)
+{
+    str pad0s = "";
+    if (nextMap <= 9)
+    {
+        pad0s = "0";
+    }
+    str newMapName = StrParam(s:"MAP", s:pad0s, d:nextMap);
+
+    ChangeLevel(newMapName, nextMapStart, CHANGELEVEL_KEEPFACING | CHANGELEVEL_NOINTERMISSION);
+}
+
+int debug_layer = 0;
+int debug_y = 0;
+
+function void debug_msg(str msg)
+{
+    SetFont("ffnew");
+    HudMessage(s:msg; HUDMSG_PLAIN, debug_layer, "CR_UNTRANSLATED", 160.0, debug_y, 0);
+    debug_layer++;
+    debug_y += 20.0;
 }
 
 function void debug(void)
 {
-    SetFont("ffnew");
-    HudMessage(d:canHeroMove, s:" , ", d:screenChanging, s:" , ", d:nextMap; HUDMSG_PLAIN, 1, "CR_UNTRANSLATED", 160.0, 120.0, 0);
-    //HudMessage(d:GetActorX(0), s:" , ", d:GetActorY(0); HUDMSG_PLAIN, 10, "CR_UNTRANSLATED", 160.0, 120.0, 0);
-    //HudMessage(d:GetActorX(0) >> 16, s:" , ", d:GetActorY(0) >> 16; HUDMSG_PLAIN, 11, "CR_UNTRANSLATED", 160.0, 140.0, 0);
-    //HudMessage(d:(8208 << 16), s:" , ", d:(16 << 16); HUDMSG_PLAIN, 12, "CR_UNTRANSLATED", 160.0, 160.0, 0);
+    debug_layer = 2;
+    debug_y = 10.0;
+    debug_msg(StrParam(d:heroX, s:" , ", d:heroY));
+    debug_msg(StrParam(d:heroX, s:" , ", d:CheckInventory("InteractUp")));
+    debug_msg(StrParam(d:heroX, s:" , ", d:CheckInventory("InteractDown")));
+    debug_msg(StrParam(d:CheckInventory("InteractLeft"), s:" , ", d:heroY));
+    debug_msg(StrParam(d:CheckInventory("InteractRight"), s:" , ", d:heroY));
 }

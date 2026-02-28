@@ -1,0 +1,29 @@
+actor NonMovingEntity
+{
+  //$Category FF Entity
+  +SOLID
+  +ALLOWPAIN
+  +FORCEPAIN
+  +SHOOTABLE
+  +NODAMAGE
+  +DONTTHRUST
+  +NOBLOOD
+  
+  Health 100
+  Height 64
+  Radius 16
+  Mass 100
+  PainChance 256
+  States
+  {
+    Spawn:
+      TNT1 A -1
+      Stop
+    Pain:
+      TNT1 A 8
+      Goto Spawn
+    Death:
+      TNT1 A -1
+      Stop    
+  }
+}

@@ -14,14 +14,14 @@ maps
 			resource0
 			{
 				type = 2;
-				location = "C:\\git\\ff.pk3";
+				location = "H:\\My Drive\\doom\\pwad\\ff.pk3";
 				option1 = 0;
 				option2 = 0;
 				notfortesting = 0;
 				requiredarchives = "";
 			}
 		}
-		defaultfloortexture = "WORLD";
+		defaultfloortexture = "MAP01";
 		defaultceiltexture = "CAVE-IN";
 		defaulttoptexture = "CAVE-IN";
 		defaultwalltexture = "CAVE-IN";
@@ -38,9 +38,9 @@ maps
 		overrideceilheight = false;
 		overridebrightness = false;
 		uselongtexturenames = false;
-		viewpositionx = 6407.117f;
-		viewpositiony = -7464.698f;
-		viewscale = 0.2329794f;
+		viewpositionx = 4611.071f;
+		viewpositiony = -2930.242f;
+		viewscale = 0.08157254f;
 		scriptcompiler = "zdoom_acs.cfg";
 		
 		grid

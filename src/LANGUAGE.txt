@@ -1,0 +1,6 @@
+[enu]
+// map02 - cornelia
+MAP02_FOUNTAIN =
+  "See your face upon the\n"
+  "clean water. How dirty!\n"
+  "Come! Wash your face!";
