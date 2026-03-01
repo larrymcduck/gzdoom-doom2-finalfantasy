@@ -1,0 +1,295 @@
+#library "shops"
+#include "zcommon.acs"
+#import "vars.acs"
+
+bool animating_heros = false;
+bool mustLeave = false;
+int shop_menu_level = 0;
+int cursor[8][5] = {
+  { 0, 0, 0, 0, 0 },
+  { 0, 0, 0, 0, 0 },
+  { 0, 0, 0, 0, 0 },
+  { 0, 0, 0, 0, 0 },
+  { 0, 0, 0, 0, 0 },
+  { 0, 0, 0, 0, 0 },
+  { 0, 0, 0, 0, 0 },
+  { 0, 0, 0, 0, 0 }
+};
+
+// { x, y, max choices, position, spacing }
+
+function void enter_shop(void)
+{
+  showHero = false;
+  inShop = true;
+  shop_menu_level = 0;
+  mustLeave = false;
+  animating_heros = false;
+}
+
+function void call_shop(void)
+{
+  SetMusic("ff1_nes_music", 14);
+  show_graphic("blck_scr", 9500, 160.0, 120.0);
+  show_graphic(StrParam(s:"shop", d:shop[0]), 9499, 160.0, 120.0);
+  show_graphic(StrParam(s:"shop", d:shop[0], d:1), 9498, 160.0, 32.0);
+
+  switch(shop[0])
+  {
+    case 0:
+      show_message(StrParam(s:"Welcome to the Inn!\nThe cost for a room is: ", d:shop[1], s:" G\nDo you wish to stay?"), 9497, 160.0, 32.0);
+      show_gold();
+      menu_yes_no(80.0, 208.0);
+      break;
+  }  
+}
+
+function void show_gold(void)
+{
+  show_graphic("shop02", 9496, 232.0, 208.0);
+  show_message(StrParam(s:"Current Gold\n", d:CheckInventory("Gold"), s:" G"), 9495, 232.0, 208.0);
+}
+
+function void menu_yes_no(int x, int y)
+{
+  show_graphic("shop03", 9494, x, y);
+  show_message("Yes\nNo", 9493, x, y);
+  cursor[0][0] = x - 22.0;
+  cursor[0][1] = y - 5.0;
+  cursor[0][2] = 2;
+  cursor[0][3] = 0;
+  cursor[0][4] = 12.0;
+}
+
+function void menu_choices(int x, int y)
+{
+  int index = 1;
+  while (index < 5 && shop[index] != 0)
+  {
+    show_message("", 9493, 232.0, 208.0);
+    index++;
+  }
+}
+
+function void leave_shop(void)
+{
+  int clear_layer = 9000;
+  while (clear_layer <= 9500)
+  {
+    clear_graphic_layer(clear_layer);
+    clear_layer++;
+  }
+  SetMusic("*");
+  SetActorPosition(0, (heroX << 16), ((heroY - 32) << 16), 0.0, 0);
+  heroDirection = "d";
+  shop[0] = -1;
+  int index = 1;
+  while (index < 5)
+  {
+    shop[index] = -1;
+    index++;
+  }
+  showHero = true;
+  leavingShop = false;
+  mustLeave = false;
+  shop_menu_level = 0;
+  while (index < 8)
+  {
+    cursor[index][0] = 0;
+    cursor[index][1] = 0;
+    cursor[index][2] = 0;
+    cursor[index][3] = 0;
+    cursor[index][4] = 0;
+    index++;
+  }
+}
+
+function void inn(int cost)
+{
+  shop[0] = 0;
+  shop[1] = cost;
+  enter_shop();
+}
+
+function void shopping(void)
+{
+  if (animating_heros)
+  {
+    inn_sleep();
+  }
+  else if (!screenChanging)
+  {
+    if (!mustLeave && !animating_heros)
+    {
+      show_cursors();
+    }
+
+    if (oldButtons != buttons)
+    {
+      cursor_movement();
+    }
+    
+    if (shop_menu_level == -1)
+    {
+      leaving_message();
+      inShop = false;
+      leavingShop = true;
+      clear_cursors();
+      clear_menus();
+    }
+
+    screenChanging = !inShop;
+  }
+}
+
+function void inn_sleep(void)
+{
+  clear_graphic_layer(9497);
+  clear_graphic_layer(9498);
+  tics++;
+  if (tics >= (35 * 5) + 17)
+  {
+    tics = 0;
+    SetMusic("ff1_nes_music", 14);
+    animating_heros = false;
+    mustLeave = true;
+    show_graphic(StrParam(s:"shop", d:shop[0], d:1), 9498, 160.0, 32.0);
+    show_message(StrParam(s:"I hope you enjoyed your stay!"), 9497, 160.0, 32.0);
+  }
+  else if (tics > 40)
+  {
+    if (buttons & BT_ATTACK)
+    {
+      tics = 35 * 6;
+    }
+  }
+  else if (tics > 20)
+  {
+    // fade in
+  }
+  else
+  {
+    // fade out
+  }
+}
+
+function void cursor_movement(void)
+{
+  if ((buttons & BT_USE) && !(oldButtons & BT_USE))
+  {
+    shop_menu_level--;
+  }
+  else if ((buttons & BT_FORWARD) && !(buttons & BT_BACK) && !(oldButtons & BT_FORWARD))
+  {
+    cursor[shop_menu_level][3]--;
+  }
+  else if ((buttons & BT_BACK) && !(buttons & BT_FORWARD) && !(oldButtons & BT_BACK))
+  {
+    cursor[shop_menu_level][3]++;
+  }
+  else if ((buttons & BT_ATTACK) && !(oldButtons & BT_ATTACK))
+  {
+    menu_choice();
+  }
+
+  if (cursor[shop_menu_level][3] == -1)
+  {
+    cursor[shop_menu_level][3] = cursor[0][2] - 1;
+  }
+  else if (cursor[shop_menu_level][3] == cursor[shop_menu_level][2])
+  {
+    cursor[shop_menu_level][3] = 0;
+  }
+}
+
+function void leaving_message(void)
+{
+  switch(shop[0])
+  {
+    case 0:
+      show_message(StrParam(s:"Take care!"), 9497, 160.0, 32.0);
+      return;
+  }
+}
+
+function void show_cursors(void)
+{
+  int index = 0;
+  while (index < shop_menu_level)
+  {
+    show_graphic("cursor2", 9400 + index, cursor[shop_menu_level][0], cursor[shop_menu_level][1] + (cursor[shop_menu_level][3] * cursor[shop_menu_level][4]));
+  }
+
+  show_graphic(
+    "cursor",
+    9400 + shop_menu_level,
+    cursor[shop_menu_level][0],
+    cursor[shop_menu_level][1] +
+      (cursor[shop_menu_level][3] * cursor[shop_menu_level][4])
+  );
+}
+
+function void clear_cursors(void)
+{
+  int index = 0;
+  while (index < 8)
+  {
+    clear_graphic_layer(9400 + index);
+    index++;
+  }
+}
+
+function void clear_menus(void)
+{
+  clear_cursors();
+  int clear_layer = 9496;
+  while (clear_layer >= 9493)
+  {
+    clear_graphic_layer(clear_layer);
+    clear_layer--;
+  }
+}
+
+function void menu_choice(void)
+{
+  if (mustLeave)
+  {
+    shop_menu_level = -1;
+    return;
+  }
+
+  switch(shop[0])
+  {
+    case 0:
+      if (cursor[shop_menu_level][3] == 1)
+      {
+        shop_menu_level--;
+      }
+      else
+      {
+        if (CheckInventory("Gold") < shop[1])
+        {
+          mustLeave = true;
+          clear_menus();
+          show_message(StrParam(s:"I'm sorry, but you\ndo not have enough gold."), 9497, 160.0, 32.0);
+        }
+        else
+        {
+          SetMusic("ff1_nes_music", 21);
+          animate_heros();
+          TakeInventory("Gold", shop[1]);
+          show_gold();
+          // fade in/out heros
+          // restore hp/mp
+       }
+      }
+      break;
+  }
+}
+
+function void animate_heros(void)
+{
+  animating_heros = true;
+  clear_menus();
+  clear_cursors();
+}

@@ -102,7 +102,7 @@ maps
 				requiredarchives = "";
 			}
 		}
-		defaultfloortexture = "FLOOR0_1";
+		defaultfloortexture = "MAP02";
 		defaultceiltexture = "CAVE-IN";
 		defaulttoptexture = "CAVE-IN";
 		defaultwalltexture = "CAVE-IN";
@@ -119,9 +119,9 @@ maps
 		overrideceilheight = false;
 		overridebrightness = false;
 		uselongtexturenames = false;
-		viewpositionx = 984.8806f;
-		viewpositiony = -1027.105f;
-		viewscale = 2.470625f;
+		viewpositionx = 917.6378f;
+		viewpositiony = -1029.962f;
+		viewscale = 1.124542f;
 		scriptcompiler = "zdoom_acs.cfg";
 		
 		grid

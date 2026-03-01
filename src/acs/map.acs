@@ -1,6 +1,7 @@
 #library "map"
 #include "zcommon.acs"
 #import "vars.acs"
+#import "shops.acs"
 #import "map01_world.acs"
 #import "map02_cornelia.acs"
 
@@ -16,11 +17,7 @@ int canMoveDownLeft = 1;
 int mapDisplayX = 0;
 int mapDisplayY = 0;
 
-int mapCoordinateX = 0;
-int mapCoordinateY = 0;
-
 int mapSize = 0;
-str map = "";
 
 int sameMapX = -1;
 int sameMapY = -1;
@@ -28,7 +25,7 @@ int sameMapY = -1;
 int moveX = 0;
 int moveY = 0;
 
-int walkSpeed = 4;
+int moveSpeed = 4;
 
 bool showingMessage = false;
 
@@ -41,7 +38,10 @@ function void saveWorldMapCoordinates(void)
 function void show_map(void)
 {
     mapSize = get_map_size();
-    map = get_map_graphic();
+    
+    str map = StrParam(s:"map", s:pad0s(nextMap), d:currentMapNum);
+
+    // if map level > 1, use StrParam to add s:"_", d:2
 
     heroX = GetActorX(0) >> 16;
     heroY = GetActorY(0) >> 16;
@@ -61,11 +61,18 @@ function void show_map(void)
     show_graphic(map, MAP_LAYER + 7, mapDisplayX, mapDisplayY + (mapSize << 16));
     show_graphic(map, MAP_LAYER + 8, mapDisplayX + (mapSize << 16), mapDisplayY + (mapSize << 16));
 
-    str heroMapSprite = StrParam(s:heroMap, s:"_map", s:heroDirection, d:heroMapState);
-    show_graphic(heroMapSprite, HERO_MAP_LAYER, (hudHalfWidth << 16), ((hudHalfHeight - 3) << 16));
-
     map_objects();
     hero_map_movement();
+
+    if (showHero)
+    {
+      str heroMapSprite = StrParam(s:heroMap, s:"_map", s:heroDirection, d:heroMapState);
+      show_graphic(heroMapSprite, HERO_MAP_LAYER, (hudHalfWidth << 16), ((hudHalfHeight - 3) << 16));
+    }
+    else
+    {
+      clear_graphic_layer(HERO_MAP_LAYER);
+    }
 }
 
 function void check_movement(void) {
@@ -117,14 +124,12 @@ function void hero_map_movement(void)
         check_map_points();
     }
 
-    int moveSpeed = walkSpeed;
-
     if (canHeroMove && !showingMessage)
     {
+        //int buttons = GetPlayerInput(0, INPUT_BUTTONS);
         canHeroMove = false;
         check_map_loop();
         check_movement();
-        int buttons = GetPlayerInput(0, INPUT_BUTTONS);
 
         if ((buttons & BT_FORWARD) && !(buttons & BT_BACK) && canMoveUp)  // move up
         {
@@ -181,16 +186,20 @@ function void hero_map_movement(void)
                 moveY = 0;
             }
         }
-
+        
         nextMapX = GetActorX(0) + ((moveX * 32) << 16);
         nextMapY = GetActorY(0) + ((moveY * 32) << 16);
 
-        if (buttons & BT_JUMP)
-        {
-            moveSpeed = walkSpeed * 2;
-        }
-
         // (buttons & BT_USE) || (buttons & BT_ALTATTACK) || (buttons & BT_JUMP)
+
+        if (buttons & BT_JUMP)  // running
+        {
+          moveSpeed = 8;
+        }
+        else
+        {
+          moveSpeed = 4;
+        }
 
     }
 
@@ -252,27 +261,6 @@ function int get_map_size(void)
     return -1;
 }
 
-function str get_map_graphic(void)
-{
-  //return "";
-
-  switch(currentMapNum)
-  {
-    case 1:
-      return "world";
-    case 2:
-      return "cornelia";
-  }
-
-  return "";
-}
-
-function void mapDisplayCoordinates(int x, int y)
-{
-    mapCoordinateX = mapDisplayX - ((mapSize / 2) << 16) + (x << 16);
-    mapCoordinateY = mapDisplayY - ((mapSize / 2) << 16) + (y << 16);
-}
-
 function int mapDisplayCoordinatesX(int x)
 {
     return mapDisplayX - ((mapSize / 2) << 16) + (x << 16);
@@ -311,11 +299,12 @@ function void check_map_points(void)
             break;
     }
 
-    screenChanging = nextMap != currentMapNum;
+    screenChanging = (nextMap != currentMapNum) || inShop;
 }
 
 function void set_next_map(int nextMapNum, str nextMapHeroDir)
 {
+    changingMap = true;
     TakeInventory("MovedOnce", 1);
     if (currentMapNum == 1)
     {
@@ -375,7 +364,7 @@ script "interact" (int entity_map, int entity)
   }
 }
 
-function void show_message(str lump)
+function void show_message_lump(str lump)
 {
   showingMessage = true;
   show_graphic("msg_back", 101, 160.0, 50.0);
@@ -390,4 +379,16 @@ function void clear_message(void)
   showingMessage = false;
   clear_graphic_layer(101);
   clear_graphic_layer(100);
+}
+
+function void show_door(str door_graphic, int layer, int x, int y)
+{
+  if (heroX == x * 2 && ((-heroY == y * 2) || (-(nextMapY >> 16) == y * 2)))
+  {
+    clear_graphic_layer(layer);
+  }
+  else
+  {
+    show_graphic(door_graphic, layer, mapDisplayCoordinatesX(x), mapDisplayCoordinatesY(y));
+  }
 }

@@ -1,6 +1,7 @@
 #library "map01_world"
 #include "zcommon.acs"
 #import "vars.acs"
+#import "shops.acs"
 #import "map.acs"
 
 function void map01_objects(void)
@@ -8,16 +9,14 @@ function void map01_objects(void)
     if (CheckInventory("ShowWorldBridge"))
     {
         Floor_MoveToValue(1, 255, 0, 0);
-        mapDisplayCoordinates(2440, 2440);
-        int bridge_coordinates[2] = { mapCoordinateX, mapCoordinateY };
         if (CheckInventory("RidingShip"))
         {
-            show_graphic("bridge", HERO_MAP_LAYER - 1, bridge_coordinates[0], bridge_coordinates[1]);
+            show_graphic("bridge", HERO_MAP_LAYER - 1, mapDisplayCoordinatesX(2440), mapDisplayCoordinatesY(2440));
             clear_graphic_layer(HERO_MAP_LAYER + 1);
         }
         else
         {
-            show_graphic("bridge", HERO_MAP_LAYER + 1, bridge_coordinates[0], bridge_coordinates[1]);
+            show_graphic("bridge", HERO_MAP_LAYER + 1, mapDisplayCoordinatesX(2440), mapDisplayCoordinatesY(2440));
             clear_graphic_layer(HERO_MAP_LAYER - 1);
         }
     }

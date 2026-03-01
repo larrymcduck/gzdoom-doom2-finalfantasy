@@ -21,7 +21,7 @@ maps
 				requiredarchives = "";
 			}
 		}
-		defaultfloortexture = "MAP01";
+		defaultfloortexture = "CAVE-IN";
 		defaultceiltexture = "CAVE-IN";
 		defaulttoptexture = "CAVE-IN";
 		defaultwalltexture = "CAVE-IN";

@@ -1,6 +1,7 @@
 #library "ff"
 #include "zcommon.acs"
 #import "vars.acs"
+#import "shops.acs"
 #import "map.acs"
 
 script "open" OPEN
@@ -11,11 +12,9 @@ script "open" OPEN
 script "enter" ENTER
 {
     reset_vars();
-    bool terminateScript = false;
 
-    while (!terminateScript)
+    while (!background_process())
     {
-        terminateScript = background_process();
         Delay(1);
     }
 
@@ -32,11 +31,8 @@ script "return" RETURN
 
     reset_vars();
 
-    bool terminateScript = false;
-
-    while (!terminateScript)
+    while (!background_process())
     {
-        terminateScript = background_process();
         Delay(1);
     }
 
@@ -47,80 +43,110 @@ function void reset_vars(void)
 {
     TakeInventory("MovedOnce", 1);
     heroDirection = nextHeroDirection;
+    changingMap = false;
+    showHero = true;
 }
 
 function bool background_process(void)
 {
-    currentMapNum = GetLevelInfo(LEVELINFO_LEVELNUM);
+  buttons = GetPlayerInput(0, INPUT_BUTTONS);
+  currentMapNum = GetLevelInfo(LEVELINFO_LEVELNUM);
+  if (!inShop && !leavingShop && !heroMenuShown && !inBattle)
+  {
     show_map();
-    //debug();
+  }
+  else if (inShop)
+  {
+    shopping();
+  }
 
-    return screen_changing();
+  //debug();
+
+  oldButtons = buttons;
+  return screen_changing();
 }
 
 function bool screen_changing(void)
 {
-    if (screenChanging)
+  if (screenChanging)
+  {
+    if (tics <= 20)
     {
-        if (tics <= 20)
+      alpha += 0.05;
+    }
+    else if (tics == 21)
+    {
+      if (changingMap)
+      {
+        if (hero_move_map())
         {
-            alpha += 0.05;
+          return true;
         }
-        else if (tics == 21)
-        {
-            // change map
-            if (sameMapX != -1 && sameMapY != -1)
-            {
-                TakeInventory("MovedOnce", 1);
-                SetActorPosition(0, (sameMapX << 16), (sameMapY << 16), 0.0, 0);
-                sameMapX = -1;
-                sameMapY = -1;
-                heroDirection = nextHeroDirection;
-            }
-            else if (nextMap != currentMapNum)
-            {
-                tics++;
-                return true;
-            }
-        }
-        else
-        {
-            alpha -= 0.05;
-        }
-
-        SetFont("blck_scr");
-        HudMessage(s:"A"; HUDMSG_PLAIN | HUDMSG_ALPHA, 100, "CR_UNTRANSLATED", 160.0, 120.0, 0, alpha);
-
-        if (tics == 42)
-        {
-            clear_graphic_layer(100);
-            screenChanging = false;
-            tics = 0;
-            alpha = 0.0;
-            nextMap = currentMapNum;
-            nextMapX = GetActorX(0);
-            nextMapY = GetActorY(0);
-        }
-        else
-        {
-            tics++;
-        }
+      }
+      else if (inShop)
+      {
+        call_shop();
+      }
+      else if (leavingShop)
+      {
+        leave_shop();
+      }
+    }
+    else
+    {
+      alpha -= 0.05;
     }
 
-    return false;
+    SetFont("blck_scr");
+    HudMessage(s:"A"; HUDMSG_PLAIN | HUDMSG_ALPHA, 100, "CR_UNTRANSLATED", 160.0, 120.0, 0, alpha);
+
+    if (tics == 42)
+    {
+      clear_graphic_layer(100);
+      screenChanging = false;
+      tics = 0;
+      alpha = 0.0;
+      nextMap = currentMapNum;
+      nextMapX = GetActorX(0);
+      nextMapY = GetActorY(0);
+    }
+    else
+    {
+      tics++;
+    }
+  }
+
+  return false;
+}
+
+function bool hero_move_map(void)
+{
+  if (sameMapX != -1 && sameMapY != -1)
+  {
+    TakeInventory("MovedOnce", 1);
+    SetActorPosition(0, (sameMapX << 16), (sameMapY << 16), 0.0, 0);
+    sameMapX = -1;
+    sameMapY = -1;
+    heroDirection = nextHeroDirection;
+  }
+  else if (nextMap != currentMapNum)
+  {
+    tics++;
+    return true;
+  }
+  
+  return false;
 }
 
 function void changeMap(void)
 {
-    str pad0s = "";
-    if (nextMap <= 9)
-    {
-        pad0s = "0";
-    }
-    str newMapName = StrParam(s:"MAP", s:pad0s, d:nextMap);
-
-    ChangeLevel(newMapName, nextMapStart, CHANGELEVEL_KEEPFACING | CHANGELEVEL_NOINTERMISSION);
+  ChangeLevel(StrParam(s:"MAP", s:pad0s(nextMap), d:nextMap), nextMapStart, CHANGELEVEL_KEEPFACING | CHANGELEVEL_NOINTERMISSION);
 }
+
+
+
+
+
 
 int debug_layer = 0;
 int debug_y = 0;
@@ -137,9 +163,9 @@ function void debug(void)
 {
     debug_layer = 2;
     debug_y = 10.0;
-    debug_msg(StrParam(d:heroX, s:" , ", d:heroY));
-    debug_msg(StrParam(d:heroX, s:" , ", d:CheckInventory("InteractUp")));
-    debug_msg(StrParam(d:heroX, s:" , ", d:CheckInventory("InteractDown")));
-    debug_msg(StrParam(d:CheckInventory("InteractLeft"), s:" , ", d:heroY));
-    debug_msg(StrParam(d:CheckInventory("InteractRight"), s:" , ", d:heroY));
+    debug_msg(StrParam(d:buttons));
+    //debug_msg(StrParam(d:inShop));
+    //debug_msg(StrParam(d:leavingShop));
+    //debug_msg(StrParam(d:CheckInventory("InteractLeft"), s:" , ", d:heroY));
+    //debug_msg(StrParam(d:CheckInventory("InteractRight"), s:" , ", d:heroY));
 }

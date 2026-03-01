@@ -1,6 +1,8 @@
 #library "vars"
 #include "zcommon.acs"
 
+int shop[6] = { -1, 0, 0, 0, 0, 0 };
+
 global int 1:MAP_LAYER;
 global int 2:HERO_MAP_LAYER;
 
@@ -32,24 +34,37 @@ global int 21:heroMapState;
 global int 22:heroMapStateTics;
 global str 23:heroMap;
 
+global bool 24:changingMap;
+global bool 25:showHero;
+global bool 26:inShop;
+global bool 27:leavingShop;
+
+global bool 28:inBattle;
+global bool 29:heroMenuShown;
+
+global int 30:buttons;
+global int 31:oldButtons;
+
 function void set_vars(void)
 {
-    if (!varsSet)
-    {
-        MAP_LAYER = 10000;
-        HERO_MAP_LAYER = 5000;
+  if (!varsSet)
+  {
+    MAP_LAYER = 10000;
+    HERO_MAP_LAYER = 5000;
 
-        hudHalfWidth = 160;
-        hudHalfHeight = 120;
+    hudHalfWidth = 160;
+    hudHalfHeight = 120;
 
-        nextHeroDirection = "d";
-        heroDirection = "d";
-        canHeroMove = true;
-        heroMapState = 1;
-        heroMap = "fi";
+    nextHeroDirection = "d";
+    heroDirection = "d";
+    canHeroMove = true;
+    heroMapState = 1;
+    heroMap = "fi";
+    showHero = true;
+    shop[0] = -1;
 
-        varsSet = true;
-    }
+    varsSet = true;
+  }
 }
 
 function void show_graphic(str graphic, int layer, int x, int y)
@@ -59,7 +74,24 @@ function void show_graphic(str graphic, int layer, int x, int y)
   HudMessage(s:"A"; HUDMSG_PLAIN, layer, "CR_UNTRANSLATED", x, y, 0);
 }
 
+function void show_message(str message, int layer, int x, int y)
+{
+  SetFont("ffnew");
+  HudMessage(s:message; HUDMSG_PLAIN, layer, "CR_UNTRANSLATED", x, y, 0);
+
+}
+
 function void clear_graphic_layer(int layer)
 {
     HudMessage(s:""; HUDMSG_PLAIN, layer, "CR_UNTRANSLATED", 0.0, 0.0, 0);
+}
+
+function str pad0s(int check)
+{
+  if (check <= 9)
+  {
+    return "0";
+  }
+
+  return "";
 }
